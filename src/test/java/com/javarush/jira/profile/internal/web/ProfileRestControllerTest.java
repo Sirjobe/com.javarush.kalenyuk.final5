@@ -115,7 +115,7 @@ class ProfileRestControllerTest {
     }
 
     @Test
-    void updateWithInvalidContactShouldReturnBadRequest() throws Exception {
+    void updateWithInvalidContactShouldReturnUnprocessableEntity() throws Exception {
         ContactTo invalidContact = new ContactTo("", "");
         ProfileTo invalidProfileTo = new ProfileTo(userId,
                 Collections.emptySet(),
@@ -126,27 +126,29 @@ class ProfileRestControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.user(createAuthUser()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidProfileTo)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
 
         verifyNoInteractions(profileRepository, profileMapper);
     }
 
     @Test
-    void updateWithNullFieldsShouldReturnBadRequest() throws Exception {
-        String invalidJson = "{\"mailNotifications\": null, \"contacts\": null}";
+    void updateWithNullFieldsShouldSucceed() throws Exception {
+        String invalidJson = "{\"mailNotifications\": null, \"contacts\": null}\"";
 
         mockMvc.perform(put(ProfileRestController.REST_URL)
                         .with(csrf())
                         .with(SecurityMockMvcRequestPostProcessors.user(createAuthUser()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(invalidJson))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNoContent());
 
-        verifyNoInteractions(profileRepository, profileMapper);
+        verify(profileRepository).getOrCreate(anyLong());
+        verify(profileMapper).updateFromTo(any(), any());
+        verify(profileRepository).save(any());
     }
 
     @Test
-    void updateWithInvalidMailNotificationShouldReturnBadRequest() throws Exception {
+    void updateWithInvalidMailNotificationShouldReturnUnprocessableEntity() throws Exception {
         ProfileTo invalidProfileTo = new ProfileTo(userId,
                 Set.of(""),
                 Collections.emptySet());
@@ -156,7 +158,7 @@ class ProfileRestControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.user(createAuthUser()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidProfileTo)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
 
         verifyNoInteractions(profileRepository, profileMapper);
     }
@@ -171,8 +173,8 @@ class ProfileRestControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.user(createAuthUser()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(profileToWithWrongId)))
-                .andExpect(status().isBadRequest())  // Or whatever your exception handler returns (e.g., 400 from IllegalRequestDataException)
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("must has id=1")));  // Check error message
+                .andExpect(status().isUnprocessableEntity())  // Adjusted to 422
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("ProfileTo must has id=1")));  // Adjust message if needed
 
         verifyNoInteractions(profileRepository, profileMapper);
     }

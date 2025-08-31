@@ -14,6 +14,13 @@ import org.springframework.context.annotation.PropertySource;
 public class JiraRushApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JiraRushApplication.class, args);
+        try {
+            System.out.println("Starting Spring Boot application...");
+            SpringApplication.run(JiraRushApplication.class, args);// после отладки удалить все кроме этой строчки
+            System.out.println("Application started successfully.");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            System.exit(1);
+        }
     }
 }

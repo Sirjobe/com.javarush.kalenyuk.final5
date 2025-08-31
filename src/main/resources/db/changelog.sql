@@ -4,25 +4,34 @@
 DROP TABLE IF EXISTS USER_ROLE;
 DROP TABLE IF EXISTS CONTACT;
 DROP TABLE IF EXISTS MAIL_CASE;
-DROP SEQUENCE IF EXISTS MAIL_CASE_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS MAIL_CASE_ID_SEQ;
 DROP TABLE IF EXISTS PROFILE;
 DROP TABLE IF EXISTS TASK_TAG;
 DROP TABLE IF EXISTS USER_BELONG;
-DROP SEQUENCE IF EXISTS USER_BELONG_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS USER_BELONG_ID_SEQ;
 DROP TABLE IF EXISTS ACTIVITY;
-DROP SEQUENCE IF EXISTS ACTIVITY_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS ACTIVITY_ID_SEQ;
 DROP TABLE IF EXISTS TASK;
-DROP SEQUENCE IF EXISTS TASK_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS TASK_ID_SEQ;
 DROP TABLE IF EXISTS SPRINT;
-DROP SEQUENCE IF EXISTS SPRINT_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS SPRINT_ID_SEQ;
 DROP TABLE IF EXISTS PROJECT;
-DROP SEQUENCE IF EXISTS PROJECT_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS PROJECT_ID_SEQ;
 DROP TABLE IF EXISTS REFERENCE;
-DROP SEQUENCE IF EXISTS REFERENCE_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS REFERENCE_ID_SEQ;
 DROP TABLE IF EXISTS ATTACHMENT;
-DROP SEQUENCE IF EXISTS ATTACHMENT_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS ATTACHMENT_ID_SEQ;
 DROP TABLE IF EXISTS USERS;
-DROP SEQUENCE IF EXISTS USERS_ID_SEQ;
+DROP
+    SEQUENCE IF EXISTS USERS_ID_SEQ;
 
 create table PROJECT
 (
@@ -98,7 +107,7 @@ create table CONTACT
 (
     ID    bigint       not null,
     CODE  varchar(32)  not null,
-    "VALUE" varchar(256) not null,
+    VALUE varchar(256) not null,
     primary key (ID, CODE),
     constraint FK_CONTACT_PROFILE foreign key (ID) references PROFILE (ID) on delete cascade
 );
@@ -130,6 +139,7 @@ create table ACTIVITY
     TASK_ID       bigint not null,
     UPDATED       timestamp,
     COMMENT       varchar(4096),
+--     history of task field change
     TITLE         varchar(1024),
     DESCRIPTION   varchar(4096),
     ESTIMATE      integer,
@@ -239,18 +249,26 @@ values ('assigned', 'Assigned', 6, '1'),
 --changeset gkislin:change_backtracking_tables
 
 alter table SPRINT rename COLUMN TITLE to CODE;
-alter table SPRINT alter column CODE type varchar(32);
-alter table SPRINT alter column CODE set not null;
+alter table SPRINT
+    alter column CODE type varchar (32);
+alter table SPRINT
+    alter column CODE set not null;
 create unique index UK_SPRINT_PROJECT_CODE on SPRINT (PROJECT_ID, CODE);
 
-ALTER TABLE TASK DROP COLUMN DESCRIPTION;
-ALTER TABLE TASK DROP COLUMN PRIORITY_CODE;
-ALTER TABLE TASK DROP COLUMN ESTIMATE;
-ALTER TABLE TASK DROP COLUMN UPDATED;
+ALTER TABLE TASK
+    DROP COLUMN DESCRIPTION;
+ALTER TABLE TASK
+    DROP COLUMN PRIORITY_CODE;
+ALTER TABLE TASK
+    DROP COLUMN ESTIMATE;
+ALTER TABLE TASK
+    DROP COLUMN UPDATED;
 
 --changeset ishlyakhtenkov:change_task_status_reference
 
-delete from REFERENCE where REF_TYPE = 3;
+delete
+from REFERENCE
+where REF_TYPE = 3;
 insert into REFERENCE (CODE, TITLE, REF_TYPE, AUX)
 values ('todo', 'ToDo', 3, 'in_progress,canceled'),
        ('in_progress', 'In progress', 3, 'ready_for_review,canceled'),
@@ -261,20 +279,25 @@ values ('todo', 'ToDo', 3, 'in_progress,canceled'),
        ('done', 'Done', 3, 'canceled'),
        ('canceled', 'Canceled', 3, null);
 
---changeset gkislin:users_add_on_delete_cascade_split
+--changeset gkislin:users_add_on_delete_cascade
 
-alter table ACTIVITY drop constraint FK_ACTIVITY_USERS;
-alter table ACTIVITY add constraint FK_ACTIVITY_USERS foreign key (AUTHOR_ID) references USERS (ID) on delete cascade;
+alter table ACTIVITY
+    drop constraint FK_ACTIVITY_USERS,
+    add constraint FK_ACTIVITY_USERS foreign key (AUTHOR_ID) references USERS (ID) on delete cascade;
 
-alter table USER_BELONG drop constraint FK_USER_BELONG;
-alter table USER_BELONG add constraint FK_USER_BELONG foreign key (USER_ID) references USERS (ID) on delete cascade;
+alter table USER_BELONG
+    drop constraint FK_USER_BELONG,
+    add constraint FK_USER_BELONG foreign key (USER_ID) references USERS (ID) on delete cascade;
 
-alter table ATTACHMENT drop constraint FK_ATTACHMENT;
-alter table ATTACHMENT add constraint FK_ATTACHMENT foreign key (USER_ID) references USERS (ID) on delete cascade;
+alter table ATTACHMENT
+    drop constraint FK_ATTACHMENT,
+    add constraint FK_ATTACHMENT foreign key (USER_ID) references USERS (ID) on delete cascade;
 
 --changeset valeriyemelyanov:change_user_type_reference
 
-delete from REFERENCE where REF_TYPE = 5;
+delete
+from REFERENCE
+where REF_TYPE = 5;
 insert into REFERENCE (CODE, TITLE, REF_TYPE)
 -- USER_TYPE
 values ('project_author', 'Author', 5),
@@ -289,7 +312,9 @@ values ('project_author', 'Author', 5),
 --changeset apolik:refactor_reference_aux
 
 -- TASK_TYPE
-delete from REFERENCE where REF_TYPE = 3;
+delete
+from REFERENCE
+where REF_TYPE = 3;
 insert into REFERENCE (CODE, TITLE, REF_TYPE, AUX)
 values ('todo', 'ToDo', 3, 'in_progress,canceled|'),
        ('in_progress', 'In progress', 3, 'ready_for_review,canceled|task_developer'),
@@ -300,7 +325,7 @@ values ('todo', 'ToDo', 3, 'in_progress,canceled|'),
        ('done', 'Done', 3, 'canceled|'),
        ('canceled', 'Canceled', 3, null);
 
---changeset ishlyakhtenkov:change_UK_USER_BELonganonymous
+--changeset ishlyakhtenkov:change_UK_USER_BELONG
 
 drop index UK_USER_BELONG;
 create unique index UK_USER_BELONG on USER_BELONG (OBJECT_ID, OBJECT_TYPE, USER_ID, USER_TYPE_CODE) where ENDPOINT is null;

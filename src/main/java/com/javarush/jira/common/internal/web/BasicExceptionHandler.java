@@ -40,6 +40,7 @@ public class BasicExceptionHandler {
             put(EntityNotFoundException.class, ErrorType.DATA_CONFLICT);
             put(DataIntegrityViolationException.class, ErrorType.DATA_CONFLICT);
             put(IllegalArgumentException.class, ErrorType.BAD_DATA);
+            put(IllegalArgumentException.class, ErrorType.BAD_REQUEST);
             put(BindException.class, ErrorType.BAD_REQUEST);
             put(ValidationException.class, ErrorType.BAD_REQUEST);
             put(HttpRequestMethodNotSupportedException.class, ErrorType.BAD_REQUEST);

@@ -1,6 +1,8 @@
 -- populate users
-DELETE FROM USERS;
-alter sequence USERS_ID_SEQ restart with 1;
+DELETE
+FROM USERS;
+alter
+    sequence USERS_ID_SEQ restart with 1;
 insert into USERS (EMAIL, PASSWORD, FIRST_NAME, LAST_NAME, DISPLAY_NAME)
 values ('user@gmail.com', '{noop}password', 'userFirstName', 'userLastName', 'userDisplayName'),
        ('admin@gmail.com', '{noop}admin', 'adminFirstName', 'adminLastName', 'adminDisplayName'),
@@ -22,7 +24,8 @@ values ('user@gmail.com', '{noop}password', 'userFirstName', 'userLastName', 'us
 -- 0 DEV
 -- 1 ADMIN
 -- 2 MANAGER
-DELETE FROM USER_ROLE;
+DELETE
+FROM USER_ROLE;
 insert into USER_ROLE (USER_ID, ROLE)
 values (1, 0),
        (2, 0),
@@ -54,8 +57,10 @@ values (1, 'skype', 'userSkype'),
        (2, 'tg', 'adminTg'),
        (2, 'vk', 'adminVk');
 
-delete from ATTACHMENT;
-alter sequence ATTACHMENT_ID_SEQ restart with 1;
+delete
+from ATTACHMENT;
+alter
+    sequence ATTACHMENT_ID_SEQ restart with 1;
 insert into ATTACHMENT (name, file_link, object_id, object_type, user_id, date_time)
 values ('Снимок экрана 1.png', './attachments/project/1_Снимок экрана 1.png', 2, 0, 4, '2023-05-04 22:28:50.215429'),
        ('Снимок экрана 2.png', './attachments/project/2_Снимок экрана 2.png', 2, 0, 4, '2023-05-04 22:28:53.687600'),
@@ -65,25 +70,35 @@ values ('Снимок экрана 1.png', './attachments/project/1_Снимок
        ('Снимок экрана 2.png', './attachments/task/2_Снимок экрана 2.png', 41, 2, 4, '2023-05-04 22:28:50.215429'),
        ('Ежедневный-чеклист.xlsx', './attachments/task/3_Ежедневный-чеклист.xlsx', 38, 2, 4,
         '2023-05-04 22:28:50.215429');
-alter sequence ATTACHMENT_ID_SEQ restart with 1000;
+alter
+    sequence ATTACHMENT_ID_SEQ restart with 1000;
 
 
 -- populate tasks
-delete from TASK;
-alter sequence TASK_ID_SEQ restart with 1;
-delete from SPRINT;
-alter sequence SPRINT_ID_SEQ restart with 1;
-delete from PROJECT;
-alter sequence PROJECT_ID_SEQ restart with 1;
-delete from ACTIVITY;
-alter sequence ACTIVITY_ID_SEQ restart with 1;
+delete
+from TASK;
+alter
+    sequence TASK_ID_SEQ restart with 1;
+delete
+from SPRINT;
+alter
+    sequence SPRINT_ID_SEQ restart with 1;
+delete
+from PROJECT;
+alter
+    sequence PROJECT_ID_SEQ restart with 1;
+delete
+from ACTIVITY;
+alter
+    sequence ACTIVITY_ID_SEQ restart with 1;
 
 insert into PROJECT (code, title, description, type_code, parent_id)
 values ('JiraRush', 'JiraRush', '«Mini-JIRA» app : project management system tutorial app', 'task_tracker', null),
        ('Test_Project', 'Test Project', 'Just test project', 'task_tracker', null),
        ('Test_Project_2', 'Test Project 2', 'Just test project 2', 'task_tracker', null),
        ('JiraRush sub', 'JiraRush subproject', 'subproject', 'task_tracker', 1);
-alter sequence PROJECT_ID_SEQ restart with 1000;
+alter
+    sequence PROJECT_ID_SEQ restart with 1000;
 
 insert into SPRINT (status_code, startpoint, endpoint, code, project_id)
 values ('active', null, null, 'Sprint-2', 1),
@@ -91,7 +106,8 @@ values ('active', null, null, 'Sprint-2', 1),
        ('finished', '2023-04-03 12:14:11', '2023-04-18 17:03:41', 'Sprint-2', 2),
        ('active', '2023-04-05 14:25:43', '2023-06-10 13:00:00', 'Sprint-3', 2),
        ('active', null, null, 'Sprint-1', 4);
-alter sequence SPRINT_ID_SEQ restart with 1000;
+alter
+    sequence SPRINT_ID_SEQ restart with 1000;
 
 ---- project 1 -------------
 INSERT INTO TASK (TITLE, TYPE_CODE, STATUS_CODE, PROJECT_ID, SPRINT_ID, STARTPOINT)
@@ -296,7 +312,8 @@ values ('Add role manager and filters in security', 'task', 'done', 1, 1, 1,
         now() + random() * interval '5 minutes' + random() * interval '20 seconds'),
        ('Subproject backlog subtask', 'task', 'in_progress', 4, null, 88,
         now() + random() * interval '5 minutes' + random() * interval '20 seconds');
-alter sequence TASK_ID_SEQ restart with 1000;
+alter
+    sequence TASK_ID_SEQ restart with 1000;
 
 ---task 1------
 INSERT INTO ACTIVITY(AUTHOR_ID, TASK_ID, UPDATED, COMMENT, TITLE, DESCRIPTION, ESTIMATE, TYPE_CODE, STATUS_CODE,
@@ -307,4 +324,3 @@ values (6, 1, '2023-05-15 09:05:10', null, 'Data', null, 3, 'epic', 'in_progress
        (11, 118, '2023-05-16 10:05:10', null, 'UI tab of tasks', null, 4, 'task', 'in_progress', 'normal'),
        (5, 118, '2023-05-16 11:10:10', null, 'UI tab of tasks', null, null, null, null, 'high'),
        (11, 118, '2023-05-16 12:30:10', null, 'UI tab of tasks', null, 2, null, null, null);
-
