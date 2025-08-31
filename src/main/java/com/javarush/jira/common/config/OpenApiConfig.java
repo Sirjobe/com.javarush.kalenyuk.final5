@@ -1,4 +1,4 @@
-package com.javarush.jira.common.internal.config;
+package com.javarush.jira.common.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

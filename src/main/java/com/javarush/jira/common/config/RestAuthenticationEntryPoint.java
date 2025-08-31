@@ -1,4 +1,4 @@
-package com.javarush.jira.common.internal.config;
+package com.javarush.jira.common.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

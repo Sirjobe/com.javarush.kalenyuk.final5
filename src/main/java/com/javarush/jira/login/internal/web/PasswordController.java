@@ -1,7 +1,7 @@
 package com.javarush.jira.login.internal.web;
 
 import com.javarush.jira.common.error.DataConflictException;
-import com.javarush.jira.common.internal.config.SecurityConfig;
+import com.javarush.jira.common.config.SecurityConfig;
 import com.javarush.jira.login.User;
 import com.javarush.jira.login.internal.UserRepository;
 import com.javarush.jira.login.internal.passwordreset.PasswordResetEvent;

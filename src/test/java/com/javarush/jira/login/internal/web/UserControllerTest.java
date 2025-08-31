@@ -12,7 +12,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.javarush.jira.common.internal.config.SecurityConfig.PASSWORD_ENCODER;
+import static com.javarush.jira.common.config.SecurityConfig.PASSWORD_ENCODER;
 import static com.javarush.jira.common.util.JsonUtil.writeValue;
 import static com.javarush.jira.login.internal.web.UniqueMailValidator.EXCEPTION_DUPLICATE_EMAIL;
 import static com.javarush.jira.login.internal.web.UserController.REST_URL;

@@ -1,4 +1,4 @@
-package com.javarush.jira.common.internal.config;
+package com.javarush.jira.common.config;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,7 @@ package com.javarush.jira.login.internal;
 
 import com.javarush.jira.login.User;
 
-import static com.javarush.jira.common.internal.config.SecurityConfig.PASSWORD_ENCODER;
+import static com.javarush.jira.common.config.SecurityConfig.PASSWORD_ENCODER;
 
 public class UsersUtil {
 

@@ -5,17 +5,12 @@ import com.javarush.jira.bugtracking.UserBelongRepository;
 import com.javarush.jira.bugtracking.task.to.ActivityTo;
 import com.javarush.jira.bugtracking.task.to.TaskToExt;
 import com.javarush.jira.bugtracking.task.to.TaskToFull;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.sql.SQLException;
 
 import static com.javarush.jira.bugtracking.ObjectType.TASK;
 import static com.javarush.jira.bugtracking.task.TaskController.REST_URL;
@@ -27,7 +22,6 @@ import static com.javarush.jira.common.util.JsonUtil.writeValue;
 import static com.javarush.jira.login.internal.web.UserTestData.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,8 +45,6 @@ class TaskControllerTest extends AbstractControllerTest {
     private ActivityRepository activityRepository;
     @Autowired
     private UserBelongRepository userBelongRepository;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     @WithUserDetails(value = USER_MAIL)
@@ -490,8 +482,6 @@ class TaskControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    @Sql(statements = "DELETE FROM USER_BELONG WHERE OBJECT_ID = 1 AND OBJECT_TYPE = 2 AND USER_ID = 2 AND USER_TYPE_CODE = 'task_developer'",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void assignToTask() throws Exception {
         perform(MockMvcRequestBuilders.patch(TASKS_REST_URL_SLASH + TASK1_ID + "/assign")
                 .param(USER_TYPE, TASK_DEVELOPER))
@@ -520,32 +510,9 @@ class TaskControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    @Sql(statements = "DELETE FROM USER_BELONG WHERE OBJECT_ID = 1 AND OBJECT_TYPE = 2 AND USER_ID = 2 AND USER_TYPE_CODE = 'task_developer'",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void assignToTaskTwice() throws Exception {
-        Assumptions.assumeFalse(isH2(), "Тест пропущен для H2, так как не поддерживаются условные уникальные индексы");
-
-        perform(MockMvcRequestBuilders.patch(TASKS_REST_URL_SLASH + TASK1_ID + "/assign")
-                .param(USER_TYPE, TASK_DEVELOPER))
-                .andDo(print())
-                .andExpect(status().isNoContent());
-        assertTrue(userBelongRepository.findActiveAssignment(TASK1_ID, TASK, ADMIN_ID, TASK_DEVELOPER).isPresent());
-
-
-        perform(MockMvcRequestBuilders.patch(TASKS_REST_URL_SLASH + TASK1_ID + "/assign")
-                .param(USER_TYPE, TASK_DEVELOPER))
-                .andDo(print())
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.detail", is("Назначенная задача уже существует")));
-    }
-
-    private boolean isH2() {
-        try {
-            assertNotNull(jdbcTemplate.getDataSource());
-            return "org.h2.Driver".equals(jdbcTemplate.getDataSource().getConnection().getMetaData().getDriverName());
-        } catch (Exception e) {
-            throw new RuntimeException("Не удалось определить драйвер базы данных", e);
-        }
+        assignToTask();
+        assignToTask();
     }
 
     @Test

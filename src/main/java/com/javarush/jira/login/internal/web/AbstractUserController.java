@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import static com.javarush.jira.common.internal.config.SecurityConfig.PASSWORD_ENCODER;
+import static com.javarush.jira.common.config.SecurityConfig.PASSWORD_ENCODER;
 
 @Slf4j
 public abstract class AbstractUserController {

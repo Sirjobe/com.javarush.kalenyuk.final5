@@ -16,9 +16,10 @@ public class DataSourceConfig {
     public DataSource postgresDataSource(
             @Value("${spring.datasource.url}") String url,
             @Value("${spring.datasource.username}") String username,
-            @Value("${spring.datasource.password}") String password) {
+            @Value("${spring.datasource.password}") String password,
+            @Value("${spring.datasource.driver-class-name:org.postgresql.Driver}") String driver) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setDriverClassName(driver);
         dataSource.setUrl(url);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
@@ -30,7 +31,7 @@ public class DataSourceConfig {
     public DataSource h2DataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE");
+        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=VALUE");
         dataSource.setUsername("sa");
         dataSource.setPassword("");
         return dataSource;

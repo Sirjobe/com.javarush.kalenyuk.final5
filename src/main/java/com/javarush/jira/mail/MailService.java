@@ -2,8 +2,8 @@ package com.javarush.jira.mail;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.javarush.jira.common.internal.config.AppConfig;
-import com.javarush.jira.common.internal.config.AppProperties;
+import com.javarush.jira.common.config.AppConfig;
+import com.javarush.jira.common.config.AppProperties;
 import com.javarush.jira.common.util.Util;
 import com.javarush.jira.login.User;
 import com.javarush.jira.mail.internal.MailCase;

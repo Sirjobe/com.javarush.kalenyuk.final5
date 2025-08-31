@@ -1,4 +1,4 @@
-package com.javarush.jira.common.internal.config;
+package com.javarush.jira.common.config;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;

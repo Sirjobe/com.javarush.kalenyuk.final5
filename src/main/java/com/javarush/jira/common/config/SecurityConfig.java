@@ -1,4 +1,4 @@
-package com.javarush.jira.common.internal.config;
+package com.javarush.jira.common.config;
 
 import com.javarush.jira.login.AuthUser;
 import com.javarush.jira.login.Role;
