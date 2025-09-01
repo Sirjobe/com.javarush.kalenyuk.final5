@@ -1,42 +1,20 @@
-# Используем доступный образ Maven для сборки
-FROM maven:3.9.11-amazoncorretto-17-al2023 AS build
-
-# Устанавливаем рабочую директорию
+# Build stage
+FROM maven:3.9.9-amazoncorretto-17 AS build
 WORKDIR /app
-
-# Копируем только pom.xml сначала (для лучшего кэширования)
 COPY pom.xml .
-
-# Скачиваем зависимости (они будут закэшированы)
 RUN mvn dependency:go-offline -B
-
-# Копируем исходный код
 COPY src ./src
+RUN mvn clean package -Pprod -DskipTests
 
-# Собираем приложение
-RUN mvn clean package -DskipTests
-
-# Используем официальный образ Amazon Corretto для запуска
-FROM amazoncorretto:17-al2023
-
-# Устанавливаем рабочую директорию
+# Runtime stage
+FROM openjdk:17-slim
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-
-# Копируем собранный JAR-файл из стадии сборки
+COPY wait-for-db.sh wait-for-db.sh
+RUN chmod +x wait-for-db.sh
 COPY --from=build /app/target/*.jar app.jar
-
-# Для Amazon Linux 2023 используем альтернативный способ создания пользователя
-RUN yum install -y shadow-utils && \
-    groupadd -r jirauser && \
-    useradd -r -g jirauser jirauser && \
-    yum remove -y shadow-utils && \
-    yum clean all
-
+RUN groupadd -r jirauser && useradd -r -g jirauser jirauser
 RUN chown -R jirauser:jirauser /app
 USER jirauser
-
-# Открываем порт, который использует приложение
 EXPOSE 8080
-
-# Запускаем приложение
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for-db.sh", "db", "java", "-jar", "app.jar"]
